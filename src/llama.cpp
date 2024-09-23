@@ -10456,7 +10456,7 @@ struct llm_build_context {
         // inpL = ggml_new_tensor_4d(ctx0, GGML_TYPE_F32, hparams.n_embd, batch.n_tokens, 1, 1); // 추가
 
         n_tokens = 2; // 추가
-        inpL = ggml_new_tensor_4d(ctx0, GGML_TYPE_F32, hparams.n_embd, 4, 1, 1); // 추가
+        inpL = ggml_new_tensor_4d(ctx0, GGML_TYPE_F32, hparams.n_embd, n_tokens, 1, 1); // 추가
         
         // inp_pos - contains the positions
         // struct ggml_tensor * inp_pos = build_inp_pos(); // 수정
