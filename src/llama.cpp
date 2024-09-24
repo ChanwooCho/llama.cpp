@@ -6989,16 +6989,16 @@ static bool llm_load_tensors(
                 {
 //                     model.tok_embd = ml.create_tensor(ctx_input, tn(LLM_TENSOR_TOKEN_EMBD, "weight"), {n_embd, n_vocab});
 
-//                     // output
-//                     {
-//                         model.output_norm = ml.create_tensor(ctx_output,       tn(LLM_TENSOR_OUTPUT_NORM, "weight"), {n_embd});
-//                         model.output      = ml.create_tensor(ctx_output_split, tn(LLM_TENSOR_OUTPUT,      "weight"), {n_embd, n_vocab}, llama_model_loader::TENSOR_NOT_REQUIRED);
+                    // output
+                    {
+                        model.output_norm = ml.create_tensor(ctx_output,       tn(LLM_TENSOR_OUTPUT_NORM, "weight"), {n_embd});
+                        model.output      = ml.create_tensor(ctx_output_split, tn(LLM_TENSOR_OUTPUT,      "weight"), {n_embd, n_vocab}, llama_model_loader::TENSOR_NOT_REQUIRED);
 
-//                         // if output is NULL, init from the input tok embed
-//                         if (model.output == NULL) {
-//                             model.output = ml.create_tensor(ctx_output, tn(LLM_TENSOR_TOKEN_EMBD, "weight"), {n_embd, n_vocab}, llama_model_loader::TENSOR_DUPLICATED);
-//                         }
-//                     }
+                        // if output is NULL, init from the input tok embed
+                        if (model.output == NULL) {
+                            model.output = ml.create_tensor(ctx_output, tn(LLM_TENSOR_TOKEN_EMBD, "weight"), {n_embd, n_vocab}, llama_model_loader::TENSOR_DUPLICATED);
+                        }
+                    }
 
                     for (int i = 0; i < n_layer; ++i) {
                         ggml_context * ctx_layer = ctx_for_layer(i);
@@ -10293,7 +10293,7 @@ struct llm_build_context {
         struct ggml_tensor * cur;
         struct ggml_tensor * inpL;
         
-        n_tokens = 5; // 추가
+        n_tokens = 3; // 추가
         inpL = ggml_new_tensor_4d(ctx0, GGML_TYPE_F32, hparams.n_embd, n_tokens, 1, 1); // 추가
         // inpL = llm_build_inp_embd(ctx0, lctx, hparams, batch, model.tok_embd, cb);
 
@@ -10425,18 +10425,18 @@ struct llm_build_context {
 
         cur = inpL;
 
-//         cur = llm_build_norm(ctx0, cur, hparams,
-//                 model.output_norm, NULL,
-//                 LLM_NORM_RMS, cb, -1);
-//         cb(cur, "result_norm", -1);
+        cur = llm_build_norm(ctx0, cur, hparams,
+                model.output_norm, NULL,
+                LLM_NORM_RMS, cb, -1);
+        cb(cur, "result_norm", -1);
 
-//         // lm_head
-//         cur = llm_build_lora_mm(lctx, ctx0, model.output, cur);
+        // lm_head
+        cur = llm_build_lora_mm(lctx, ctx0, model.output, cur);
 
-//         // For Granite architecture
-//         if (hparams.f_logit_scale) {
-//             cur = ggml_scale(ctx0, cur, 1.0f / hparams.f_logit_scale);
-//         }
+        // For Granite architecture
+        if (hparams.f_logit_scale) {
+            cur = ggml_scale(ctx0, cur, 1.0f / hparams.f_logit_scale);
+        }
 
         cb(cur, "result_output", -1);
 
@@ -10458,8 +10458,8 @@ struct llm_build_context {
         // n_tokens = batch.n_tokens; // 추가
         // inpL = ggml_new_tensor_4d(ctx0, GGML_TYPE_F32, hparams.n_embd, batch.n_tokens, 1, 1); // 추가
         
-        n_tokens = 5; // 추가
-        inpL = ggml_new_tensor_4d(ctx0, GGML_TYPE_F32, hparams.n_embd, n_tokens, 1, 1); // 추가
+        n_tokens = 4; // 추가
+        inpL = ggml_new_tensor_4d(ctx0, GGML_TYPE_F32, hparams.n_embd, 4, 1, 1); // 추가
         
         // inp_pos - contains the positions
         // struct ggml_tensor * inp_pos = build_inp_pos(); // 수정
