@@ -6987,18 +6987,18 @@ static bool llm_load_tensors(
             case LLM_ARCH_MINICPM:
             case LLM_ARCH_GRANITE:
                 {
-//                     model.tok_embd = ml.create_tensor(ctx_input, tn(LLM_TENSOR_TOKEN_EMBD, "weight"), {n_embd, n_vocab});
+                    model.tok_embd = ml.create_tensor(ctx_input, tn(LLM_TENSOR_TOKEN_EMBD, "weight"), {n_embd, n_vocab});
 
-                    // output
-                    {
-                        model.output_norm = ml.create_tensor(ctx_output,       tn(LLM_TENSOR_OUTPUT_NORM, "weight"), {n_embd});
-                        model.output      = ml.create_tensor(ctx_output_split, tn(LLM_TENSOR_OUTPUT,      "weight"), {n_embd, n_vocab}, llama_model_loader::TENSOR_NOT_REQUIRED);
+                    // // output
+                    // {
+                    //     model.output_norm = ml.create_tensor(ctx_output,       tn(LLM_TENSOR_OUTPUT_NORM, "weight"), {n_embd});
+                    //     model.output      = ml.create_tensor(ctx_output_split, tn(LLM_TENSOR_OUTPUT,      "weight"), {n_embd, n_vocab}, llama_model_loader::TENSOR_NOT_REQUIRED);
 
-                        // if output is NULL, init from the input tok embed
-                        if (model.output == NULL) {
-                            model.output = ml.create_tensor(ctx_output, tn(LLM_TENSOR_TOKEN_EMBD, "weight"), {n_embd, n_vocab}, llama_model_loader::TENSOR_DUPLICATED);
-                        }
-                    }
+                    //     // if output is NULL, init from the input tok embed
+                    //     if (model.output == NULL) {
+                    //         model.output = ml.create_tensor(ctx_output, tn(LLM_TENSOR_TOKEN_EMBD, "weight"), {n_embd, n_vocab}, llama_model_loader::TENSOR_DUPLICATED);
+                    //     }
+                    // }
 
                     for (int i = 0; i < n_layer; ++i) {
                         ggml_context * ctx_layer = ctx_for_layer(i);
@@ -10425,18 +10425,18 @@ struct llm_build_context {
 
         cur = inpL;
 
-        cur = llm_build_norm(ctx0, cur, hparams,
-                model.output_norm, NULL,
-                LLM_NORM_RMS, cb, -1);
-        cb(cur, "result_norm", -1);
+        // cur = llm_build_norm(ctx0, cur, hparams,
+        //         model.output_norm, NULL,
+        //         LLM_NORM_RMS, cb, -1);
+        // cb(cur, "result_norm", -1);
 
-        // lm_head
-        cur = llm_build_lora_mm(lctx, ctx0, model.output, cur);
+        // // lm_head
+        // cur = llm_build_lora_mm(lctx, ctx0, model.output, cur);
 
-        // For Granite architecture
-        if (hparams.f_logit_scale) {
-            cur = ggml_scale(ctx0, cur, 1.0f / hparams.f_logit_scale);
-        }
+        // // For Granite architecture
+        // if (hparams.f_logit_scale) {
+        //     cur = ggml_scale(ctx0, cur, 1.0f / hparams.f_logit_scale);
+        // }
 
         cb(cur, "result_output", -1);
 
