@@ -7069,15 +7069,15 @@ static bool llm_load_tensors(
             case LLM_ARCH_OPT:
                 {
 // 수정
-//                     model.tok_embd = ml.create_tensor(ctx_input, tn(LLM_TENSOR_TOKEN_EMBD, "weight"), {n_embd, n_vocab});
-//                     model.pos_embd = ml.create_tensor(ctx_input, tn(LLM_TENSOR_POS_EMBD,   "weight"), {n_embd, n_ctx_train + 2});
+                    model.tok_embd = ml.create_tensor(ctx_input, tn(LLM_TENSOR_TOKEN_EMBD, "weight"), {n_embd, n_vocab});
+                    model.pos_embd = ml.create_tensor(ctx_input, tn(LLM_TENSOR_POS_EMBD,   "weight"), {n_embd, n_ctx_train + 2});
 
-//                     // output
-//                     {
-//                         model.output_norm   = ml.create_tensor(ctx_output,       tn(LLM_TENSOR_OUTPUT_NORM, "weight"), {n_embd});
-//                         model.output_norm_b = ml.create_tensor(ctx_output,       tn(LLM_TENSOR_OUTPUT_NORM, "bias"),   {n_embd});
-//                         model.output        = ml.create_tensor(ctx_output_split, tn(LLM_TENSOR_OUTPUT,      "weight"), {n_embd, n_vocab}); 
-//                     }
+                    // output
+                    {
+                        model.output_norm   = ml.create_tensor(ctx_output,       tn(LLM_TENSOR_OUTPUT_NORM, "weight"), {n_embd});
+                        model.output_norm_b = ml.create_tensor(ctx_output,       tn(LLM_TENSOR_OUTPUT_NORM, "bias"),   {n_embd});
+                        model.output        = ml.create_tensor(ctx_output_split, tn(LLM_TENSOR_OUTPUT,      "weight"), {n_embd, n_vocab}); 
+                    }
 
 
                     for (int i = 0; i < n_layer; ++i) {
@@ -10455,11 +10455,11 @@ struct llm_build_context {
         struct ggml_tensor * pos;
         struct ggml_tensor * inpL;
         
-        // n_tokens = batch.n_tokens; // 추가
-        // inpL = ggml_new_tensor_4d(ctx0, GGML_TYPE_F32, hparams.n_embd, batch.n_tokens, 1, 1); // 추가
+        n_tokens = batch.n_tokens; // 추가
+        inpL = ggml_new_tensor_4d(ctx0, GGML_TYPE_F32, hparams.n_embd, batch.n_tokens, 1, 1); // 추가
         
-        n_tokens = 4; // 추가
-        inpL = ggml_new_tensor_4d(ctx0, GGML_TYPE_F32, hparams.n_embd, 4, 1, 1); // 추가
+        // n_tokens = 4; // 추가
+        // inpL = ggml_new_tensor_4d(ctx0, GGML_TYPE_F32, hparams.n_embd, 4, 1, 1); // 추가
         
         // inp_pos - contains the positions
         // struct ggml_tensor * inp_pos = build_inp_pos(); // 수정
@@ -10555,13 +10555,13 @@ struct llm_build_context {
             inpL = cur;
         }
         
-        // cur = llm_build_norm(ctx0, inpL, hparams, //수정
-        //         model.output_norm,
-        //         model.output_norm_b,
-        //         LLM_NORM, cb, -1);
-        // cb(cur, "result_norm", -1);
+        cur = llm_build_norm(ctx0, inpL, hparams, //수정
+                model.output_norm,
+                model.output_norm_b,
+                LLM_NORM, cb, -1);
+        cb(cur, "result_norm", -1);
         // lm_head
-        // cur = llm_build_lora_mm(lctx, ctx0, model.output, cur);
+        cur = llm_build_lora_mm(lctx, ctx0, model.output, cur);
         cb(cur, "result_output", -1);
 
         ggml_build_forward_expand(gf, cur);
